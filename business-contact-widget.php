@@ -3,7 +3,7 @@
 Plugin Name: Business Contact Widget
 Plugin URI: http://stressfreesites.co.uk/plugins/business-contact-widget
 Description: This plugin creates a widget which easily displays, without becoming cluttered, all the business contact details of a company/organisation.
-Version: 2.6.7
+Version: 2.7.0
 Author: StressFree Sites
 Author URI: http://stressfreesites.co.uk
 Text Domain: bcw
@@ -33,7 +33,7 @@ if ( is_admin() ) {
 
 /* Localisation of text */
 function bcw_init() {
-  load_plugin_textdomain( 'bcw', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+    load_plugin_textdomain( 'bcw', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 add_action('plugins_loaded', 'bcw_init');
 
@@ -153,6 +153,10 @@ function bcw_activate() {
         $settings['mainAddress'] = $widget[1]['mainAddress'];
         $settings['secondaryAddressName'] = $widget[1]['secondaryAddressName'];
         $settings['secondaryAddress'] = $widget[1]['secondaryAddress'];
+        $settings['tertiaryAddressName'] = $widget[1]['tertiaryAddressName'];
+        $settings['tertiaryAddress'] = $widget[1]['tertiaryAddress'];
+        $settings['quaternaryAddressName'] = $widget[1]['quaternaryAddressName'];
+        $settings['quaternaryAddress'] = $widget[1]['quaternaryAddress'];
         $settings['message'] = $widget[1]['message'];
         $settings['map'] = $widget[1]['map'];
         $settings['openingTimes'] = $widget[1]['openingTimes'];
@@ -173,27 +177,27 @@ function bcw_activate() {
 register_activation_hook( __FILE__, 'bcw_activate' );
 
 /* Message box */
-function bcw_theme_admin_notice() {
+function bcw_plugin_admin_notice() {
 	global $current_user ;
         $user_id = $current_user->ID;
         /* Check that the user hasn't already clicked to ignore the message */
-	if ( ! get_user_meta($user_id, 'bcw_theme_ignore_notice') ) {
+	if ( ! get_user_meta($user_id, 'bcw_plugin_ignore_notice') ) {
             echo '<div class="updated"><p>'; 
-            printf(__('<p>Thank you for downloading Business Contact Widget. We hope you enjoy using the plugin, maybe some of our <a href="http://stressfreesites.co.uk/development/?utm_source=frontend&utm_medium=plugin&utm_campaign=wordpress" target="_blank">other plugins</a> would be of interest to you.</p><p>We have just launched a new Wordpress theme which might be of interest - <a href="http://www.mojo-themes.com/item/simple-setup/demo/" target="_blank">take a look</a>.</p><a href="%1$s">Hide This Notice</a>'), '?bcw_theme_nag_ignore=0');
+            printf(__('<p>Thank you for downloading Business Contact Widget, we hope you enjoy using the plugin.</p><p>If you like this plugin, you maybe interested in the <a href="http://socialprofilesandcontactdetailswordpressplugin.com/" target="_blank">premium version</a> to enable more features.</p><p>Otherwise, maybe try some of our other <a href="http://stressfreesites.co.uk/development/?utm_source=frontend&utm_medium=plugin&utm_campaign=wordpress" target="_blank">free plugins</a>.</p><a href="%1$s">Hide This Notice</a>'), '?bcw_plugin_nag_ignore=0');
             echo "</p></div>";
 	}
 }
-add_action('admin_notices', 'bcw_theme_admin_notice');
+add_action('admin_notices', 'bcw_plugin_admin_notice');
 
-function bcw_theme_nag_ignore() {
+function bcw_plugin_nag_ignore() {
 	global $current_user;
         $user_id = $current_user->ID;
         /* If user clicks to ignore the notice, add that to their user meta */
-        if ( isset($_GET['bcw_theme_nag_ignore']) && '0' == $_GET['bcw_theme_nag_ignore'] ) {
-             add_user_meta($user_id, 'bcw_theme_ignore_notice', 'true', true);
+        if ( isset($_GET['bcw_plugin_nag_ignore']) && '0' == $_GET['bcw_plugin_nag_ignore'] ) {
+             add_user_meta($user_id, 'bcw_plugin_ignore_notice', 'true', true);
 	}
 }
-add_action('admin_init', 'bcw_theme_nag_ignore');
+add_action('admin_init', 'bcw_plugin_nag_ignore');
 
 class Business_Contact_Widget extends WP_Widget {
     function Business_Contact_Widget() {
@@ -204,7 +208,7 @@ class Business_Contact_Widget extends WP_Widget {
             $control_ops = array('width' => 300, 'height' => 350, 'id_base' => 'business-contact-widget');
 
             /* Create the widget. */
-            $this->WP_Widget('business-contact-widget', 'Business Contact Widget', $widget_ops, $control_ops);
+            $this->__construct('business-contact-widget', 'Business Contact Widget', $widget_ops, $control_ops);
     }
     
     /* Displays widget on website */
@@ -239,6 +243,10 @@ class Business_Contact_Widget extends WP_Widget {
             $mainAddress = $settings['mainAddress'];
             $secondaryAddressName = $settings['secondaryAddressName'];
             $secondaryAddress = $settings['secondaryAddress'];
+            $tertiaryAddressName = $settings['tertiaryAddressName'];
+            $tertiaryAddress = $settings['tertiaryAddress'];
+            $quaternaryAddressName = $settings['quaternaryAddressName'];
+            $quaternaryAddress = $settings['quaternaryAddress'];
             $message = $settings['message'];
             $map = $settings['map'];
             $openingTimes = $settings['openingTimes'];
@@ -285,7 +293,7 @@ class Business_Contact_Widget extends WP_Widget {
                 }
             }
             
-            if ($showAddress && ($mainAddress || $secondaryAddress)){
+            if ($showAddress && ($mainAddress || $secondaryAddress || $tertiaryAddress || $quaternaryAddress)){
                 if($icons == 'Modern'){
                     echo ('<li class="' . $iconSize . '"><a href="#bcw-address"><img src="' . plugins_url('business-contact-widget/images/modern_address_grey.png') . '" class="grey"/><img src="' . plugins_url('business-contact-widget/images/modern_address.png') . '" class="colour" /></a></li>');                    
                 }
@@ -328,22 +336,22 @@ class Business_Contact_Widget extends WP_Widget {
                     echo ('<div id="bcw-telephone">');
                     
                     if ($telephone)
-                        echo ('<h4>' . __('Telephone', 'bcw') . '</h4><p>' . $telephone . '</p>');
+                        echo ('<h4>' . __('Telephone', 'bcw') . '</h4><p><a href="tel:' . preg_replace('/\s+/', '', $telephone) . '">' . $telephone . '</a></p>');
                     
                     if ($fax)
                         echo ('<h4>' . __('Fax', 'bcw') . '</h4><p>' . $fax . '</p>');
                     
                     if ($mobileNo)
-                        echo ('<h4>' . $mobileName . '\'s ' . __('Mobile', 'bcw') . '</h4><p>' . $mobileNo . '</p>');
+                        echo ('<h4>' . $mobileName . '\'s ' . __('Mobile', 'bcw') . '</h4><p><a href="tel:' . preg_replace('/\s+/', '', $mobileNo) . '">' . $mobileNo . '</a></p>');
 
                     if ($mobileNo2)
-                        echo ('<h4>' . $mobileName2 . '\'s ' . __('Mobile', 'bcw') . '</h4><p>' . $mobileNo2 . '</p>');
+                        echo ('<h4>' . $mobileName2 . '\'s ' . __('Mobile', 'bcw') . '</h4><p><a href="tel:' . preg_replace('/\s+/', '', $mobileNo2) . '">' . $mobileNo2 . '</a></p>');
                     
                     if ($mobileNo3)
-                        echo ('<h4>' . $mobileName3 . '\'s ' . __('Mobile', 'bcw') . '</h4><p>' . $mobileNo3 . '</p>');
+                        echo ('<h4>' . $mobileName3 . '\'s ' . __('Mobile', 'bcw') . '</h4><p><a href="tel:' . preg_replace('/\s+/', '', $mobileNo3) . '">' . $mobileNo3 . '</a></p>');
                     
                     if ($otherTelephoneNo)
-                        echo ('<h4>' . $otherTelephoneName . '</h4><p>' . $otherTelephoneNo . '</p>');
+                        echo ('<h4>' . $otherTelephoneName . '</h4><p><a href="tel:' . preg_replace('/\s+/', '', $otherTelephoneNo) . '">' . $otherTelephoneNo . '<a/></p>');
                     
                     echo ('</div>');
             }
@@ -371,8 +379,13 @@ class Business_Contact_Widget extends WP_Widget {
                 echo ('</div>');
             }
             
-            if ($showAddress && ($mainAddress || $secondaryAddress)){
-                    echo ('<div id="bcw-address"><h4>' . $mainAddressName . '</h4><p>' . nl2br($mainAddress) . '</p><h4>' . $secondaryAddressName . '</h4><p>' . nl2br($secondaryAddress) . '</p></div>');
+            if ($showAddress && ($mainAddress || $secondaryAddress || $tertiaryAddress || $quaternaryAddress)){
+                echo ('<div id="bcw-address">');
+                echo ('<h4>' . $mainAddressName . '</h4><p>' . nl2br($mainAddress) . '</p>');
+                echo ('<h4>' . $secondaryAddressName . '</h4><p>' . nl2br($secondaryAddress) . '</p>');
+                echo ('<h4>' . $tertiaryAddressName . '</h4><p>' . nl2br($tertiaryAddress) . '</p>');
+                echo ('<h4>' . $quaternaryAddressName . '</h4><p>' . nl2br($quaternaryAddress) . '</p>');
+                echo ('</div>');
             }
             
             /* Show message */

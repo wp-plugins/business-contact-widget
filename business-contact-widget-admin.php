@@ -49,8 +49,7 @@ function bcw_settings_init() {
     if ( empty( $settings ) ) {
             $settings = array('telephone' => '', 'fax' => '', 'mobileName' => '', 'mobileNo' => '', 'mobileName2' => '', 'mobileNo2' => '', 'mobileName3' => '', 'mobileNo3' => '', 'otherTelephoneName' => '', 'otherTelephoneNo' => '', 
                           'email' => '', 'personalEmailName' => '', 'personalEmail' => '', 'personalEmailName2' => '', 'personalEmail2' => '', 'personalEmailName3' => '', 'personalEmail3' => '', 'otherEmailName' => '', 'otherEmail' => '',
-                          'mainAddressName' => '', 'mainAddress' => '', 
-                          'secondaryAddressName' => '', 'secondaryAddress' => '', 
+                          'mainAddressName' => '', 'mainAddress' => '', 'secondaryAddressName' => '', 'secondaryAddress' => '', 'tertiaryAddressName' => '', 'tertiaryAddress' => '', 'quaternaryAddressName' => '', 'quaternaryAddress' => '', 
                           'message' => '',
                           'map' => '<iframe width="220" height="220" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.co.uk/maps?client=safari&amp;oe=UTF-8&amp;q=London&amp;ie=UTF8&amp;hq=&amp;hnear=London,+United+Kingdom&amp;gl=uk&amp;t=m&amp;z=11&amp;ll=51.507335,-0.127683&amp;output=embed"></iframe>', 
                           'openingTimes' => '',
@@ -116,6 +115,10 @@ function bcw_save_settings() {
                 $settings['mainAddress'] = $_POST['bcw_mainAddress'];
                 $settings['secondaryAddressName'] = sanitize_text_field($_POST['bcw_secondaryAddressName']);
                 $settings['secondaryAddress'] = $_POST['bcw_secondaryAddress'];
+                $settings['tertiaryAddressName'] = sanitize_text_field($_POST['bcw_tertiaryAddressName']);
+                $settings['tertiaryAddress'] = $_POST['bcw_tertiaryAddress'];
+                $settings['quaternaryAddressName'] = sanitize_text_field($_POST['bcw_quaternaryAddressName']);
+                $settings['quaternaryAddress'] = $_POST['bcw_quaternaryAddress'];
                 $settings['message'] = $_POST['bcw_message'];
                 $settings['map'] = $_POST['bcw_map'];
                 $settings['openingTimes'] = $_POST['bcw_openingTimes'];
@@ -230,6 +233,18 @@ function bcw_save_settings() {
         }
         if($settings['secondaryAddress']) {
             $settings['secondaryAddress'] = stripslashes(esc_textarea(wp_filter_post_kses($settings['secondaryAddress'])));
+        } 
+        if($settings['tertiaryAddressName']) {
+            $settings['tertiaryAddressName'] = stripslashes(esc_textarea(wp_filter_post_kses($settings['tertiaryAddressName'])));
+        }
+        if($settings['tertiaryAddress']) {
+            $settings['tertiaryAddress'] = stripslashes(esc_textarea(wp_filter_post_kses($settings['tertiaryAddress'])));
+        } 
+        if($settings['quaternaryAddressName']) {
+            $settings['quaternaryAddressName'] = stripslashes(esc_textarea(wp_filter_post_kses($settings['quaternaryAddressName'])));
+        }
+        if($settings['quaternaryAddress']) {
+            $settings['quaternaryAddress'] = stripslashes(esc_textarea(wp_filter_post_kses($settings['quaternaryAddress'])));
         } 
         if($settings['message']) {
             $settings['message'] = stripslashes(esc_textarea(wp_filter_post_kses($settings['message'])));
@@ -362,6 +377,16 @@ function bcw_display_settings_page() {
                                                     <label for="bcw_secondaryAddressName"><?php _e('Address Name','bcw'); ?></label><input id="bcw_secondaryAddressName" name="bcw_secondaryAddressName" value="<?php echo $settings['secondaryAddressName']; ?>" />		
                                                     <div class="clear"></div>
                                                     <label for="bcw_secondaryAddress"><?php _e('Address','bcw'); ?></label><textarea id="bcw_secondaryAddress" name="bcw_secondaryAddress"><?php echo $settings['secondaryAddress']; ?></textarea>
+                                                    <div class="clear"></div>
+                                                    <h3>Tertiary Address</h3>
+                                                    <label for="bcw_tertiaryAddressName"><?php _e('Address Name','bcw'); ?></label><input id="bcw_tertiaryAddressName" name="bcw_tertiaryAddressName" value="<?php echo $settings['tertiaryAddressName']; ?>" />		
+                                                    <div class="clear"></div>
+                                                    <label for="bcw_tertiaryAddress"><?php _e('Address','bcw'); ?></label><textarea id="bcw_tertiaryAddress" name="bcw_tertiaryAddress"><?php echo $settings['tertiaryAddress']; ?></textarea>
+                                                    <div class="clear"></div>
+                                                    <h3>Quaternary Address</h3>
+                                                    <label for="bcw_quaternaryAddressName"><?php _e('Address Name','bcw'); ?></label><input id="bcw_quaternaryAddressName" name="bcw_quaternaryAddressName" value="<?php echo $settings['quaternaryAddressName']; ?>" />		
+                                                    <div class="clear"></div>
+                                                    <label for="bcw_quaternaryAddress"><?php _e('Address','bcw'); ?></label><textarea id="bcw_quaternaryAddress" name="bcw_quaternaryAddress"><?php echo $settings['quaternaryAddress']; ?></textarea>
                                                 </div>
                                                 <h3 class="bcw-admin-title"><img src="<?php echo(plugins_url('/business-contact-widget/images/write.png')); ?>" class="icon" alt="Write" /><?php _e('Message Settings', 'bcw'); ?></h3>
                                                 <div>
@@ -496,40 +521,53 @@ function bcw_display_settings_page() {
                         ?>
                 </form>
                 <hr />
-            </div><!-- bcw-content -->
-            <div id="bcw-footer">
-                <div class="box">
-                    <h3>Let others know about this plugin</h3>
-                    <a href="https://twitter.com/share" class="twitter-share-button" data-via="StressFreeSites" data-size="large" data-count="none" data-hashtags="wordpress">Tweet</a><br/>
-                    <div class="fb-share-button" data-href="http://stressfreesites.co.uk/business-contact-widget/" data-width="75" data-type="button"></div>            
-                    <div id="fb-root"></div>
-                    <script>(function(d, s, id) {
-                      var js, fjs = d.getElementsByTagName(s)[0];
-                      if (d.getElementById(id)) return;
-                      js = d.createElement(s); js.id = id;
-                      js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1";
-                      fjs.parentNode.insertBefore(js, fjs);
-                    }(document, 'script', 'facebook-jssdk'));</script>
-                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-                </div><!-- box -->                
-                <div class="box">
-                    <img src="<?php echo(plugins_url('business-contact-widget/images/github.png')); ?>" width="50" />
-                    <h3>Contribute to this plugin using GitHub</h3>
+            </div><!-- poststuff -->
+        </div><!-- bcw-content -->
+        <div id="bcw-footer">
+            <div class="box">
+                <h3>Help us develop the plugin further</h3>
+                <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+                    <input type="hidden" name="cmd" value="_s-xclick">
+                    <input type="hidden" name="hosted_button_id" value="6HK26SVJPG2BG">
+                    <input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
+                    <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
+                </form>
+            </div><!-- box -->
+            <div class="box">
+                <h3>Like this plugin and want more features?</h3> 
+                <div class="left-side">
+                    <a href="http://socialprofilesandcontactdetailswordpressplugin.com/" target="_blank"><img src="<?php echo(plugins_url('business-contact-widget/images/spacd.jpg')); ?>" /></a>
+                </div>
+                <div class="right-side">
+                    <p>You maybe interested in our premium plugin <br /><a href="http://socialprofilesandcontactdetailswordpressplugin.com/" target="_blank">Social Profiles and Contact Details</a>.</p>
+                </div>
+            </div><!-- box -->                
+            <div class="box">
+                <h3>Contribute to this plugin using GitHub</h3>
+                <div class="left-side">
+                    <a href="https://github.com/StressFreeSites/business-contact-widget" target="_blank"><img src="<?php echo(plugins_url('business-contact-widget/images/github.png')); ?>" /></a>
+                </div>
+                <div class="right-side">
                     <p><strong>Create new features</strong>, fork this project on <a href="https://github.com/StressFreeSites/business-contact-widget" target="_blank">GitHub</a>.</p>
                     <p><strong>Report a bug</strong>, create an issue on <a href="https://github.com/StressFreeSites/business-contact-widget/issues" target="_blank">GitHub</a>.</p>
-                </div><!-- box -->
-                <div class="box">
-                    <h3>Help us develop the plugin further</h3>
-                    <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-                        <input type="hidden" name="cmd" value="_s-xclick">
-                        <input type="hidden" name="hosted_button_id" value="6HK26SVJPG2BG">
-                        <input type="image" src="https://www.paypalobjects.com/en_US/GB/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal – The safer, easier way to pay online.">
-                        <img alt="" border="0" src="https://www.paypalobjects.com/en_GB/i/scr/pixel.gif" width="1" height="1">
-                    </form>
-                </div><!-- box -->
-            </div><!-- bcw-footer -->
-        </div>
-    </div>
+                </div>
+            </div><!-- box -->
+            <div class="box">
+                <h3>Let others know about this plugin</h3>
+                <a href="https://twitter.com/share" class="twitter-share-button" data-via="StressFreeSites" data-size="large" data-count="none" data-hashtags="wordpress">Tweet</a><br/>
+                <div class="fb-share-button" data-href="http://stressfreesites.co.uk/business-contact-widget/" data-width="75" data-type="button"></div>            
+                <div id="fb-root"></div>
+                <script>(function(d, s, id) {
+                  var js, fjs = d.getElementsByTagName(s)[0];
+                  if (d.getElementById(id)) return;
+                  js = d.createElement(s); js.id = id;
+                  js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1";
+                  fjs.parentNode.insertBefore(js, fjs);
+                }(document, 'script', 'facebook-jssdk'));</script>
+                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+            </div><!-- box -->  
+        </div><!-- bcw-footer -->
+    </div><!-- wrap -->
 <?php
 }
 ?>
